@@ -1,0 +1,99 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply antialiased;
+  }
+}
+
+.placeholder-text {
+  @apply text-gray-400 dark:text-gray-500 italic;
+}
+
+.button-primary {
+  @apply inline-block px-6 py-3 bg-primary hover:bg-primary-dark text-white rounded-lg font-medium shadow-md hover:shadow-lg transition-all hover:-translate-y-0.5;
+}
+
+.button-secondary {
+  @apply inline-block px-6 py-3 bg-secondary hover:bg-opacity-90 text-white rounded-lg font-medium shadow-md hover:shadow-lg transition-all hover:-translate-y-0.5;
+}
+
+.section-padding {
+  @apply px-4 py-8 sm:py-12 md:px-8 md:py-16 lg:px-12 lg:py-24;
+}
+
+.section-eyebrow {
+  @apply block text-center text-xs sm:text-sm font-semibold uppercase tracking-widest text-primary mb-2 sm:mb-3;
+}
+
+.section-title {
+  @apply text-xl sm:text-3xl md:text-4xl font-bold text-center text-gray-900 dark:text-white mb-3 sm:mb-4;
+}
+
+.section-title-underline {
+  @apply w-16 h-1 bg-primary rounded-full mx-auto mb-10;
+}
+
+.input-field {
+  @apply w-full px-4 py-2 border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-gray-900 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-shadow;
+}
+
+.gallery-image {
+  @apply w-full h-64 md:h-72 object-cover rounded-lg;
+}
+
+.card-elevated {
+  @apply bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1;
+}
+
+.icon-circle {
+  @apply flex items-center justify-center h-12 w-12 rounded-full bg-primary-light dark:bg-slate-700 text-primary dark:text-primary text-2xl flex-shrink-0;
+}
+
+/* Scroll-reveal animation */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animate-fadein {
+  animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fadeinup {
+  animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
