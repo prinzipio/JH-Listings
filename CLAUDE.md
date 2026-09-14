@@ -262,6 +262,18 @@ const listing = {
 ## Tech Notes
 
 - **Frontend:** React + Vite + Tailwind CSS (`npm install` then `npm run dev`, served at http://localhost:5173/)
+- **Deployment:** GitHub Pages with GitHub Actions
+  - **Vite configuration** (`vite.config.js`): Uses conditional base URL to support both local dev and production deployment
+    - Local development: `base: '/'` (assets resolve from root)
+    - GitHub Pages production: `base: '/jh-listings/'` (assets resolve from repo subdirectory)
+    - Configured via: `base: process.env.NODE_ENV === 'production' ? '/jh-listings/' : '/'`
+  - **GitHub Actions workflow** (`.github/workflows/deploy.yml`): Automatically builds and deploys on push to main
+    - Separate build and deploy jobs for modularity
+    - Uses Node.js 18 with npm caching
+    - Uploads dist folder via `actions/upload-pages-artifact@v4`
+    - Deploys via `actions/deploy-pages@v4` (must use v4+; v2 and v3 are deprecated)
+    - Deploys to `https://prinzipio.github.io/jh-listings/`
+  - **Index.html entry point:** Properly loads React app via `<script type="module" src="/src/main.jsx"></script>` (not inline Babel scripts)
 - **No-install fallback:** `preview.html` — a standalone single-file version with inline CSS and JavaScript (React + Tailwind via CDN, Babel for JSX transpilation, no build step). Kept in sync with the Vite project data (`src/data/listings.js`) and design system (`src/index.css`, `src/components/`) for quick viewing without Node.js. Self-contained approach avoids Vite's module transformation issues and works directly in the browser via Babel's `@babel/standalone`.
   - **Asset paths:** All image paths use absolute paths (e.g., `/public/hero-background.jpg`) so they resolve correctly when served by Vite's dev server.
   - **Babel configuration:** Uses standard `<script type="text/babel">` tag without presets; Babel automatically transpiles JSX.
@@ -398,10 +410,24 @@ const listing = {
     - Hidden scrollbar with CSS (webkit + Firefox + IE fallbacks) while keeping scroll functionality
     - Reduced padding (`pt-1 pb-3 sm:pt-2 sm:pb-4`) for compact answer spacing
     - 250ms animation duration keeps interaction snappy without feeling bouncy
+46. ✓ Deployment to GitHub Pages: website now live and accessible
+    - **Live URL:** `https://prinzipio.github.io/jh-listings/`
+    - Fixed critical index.html issue: replaced broken 1000+ line inline Babel script with proper `<script type="module" src="/src/main.jsx"></script>` loading from src/main.jsx
+    - Added conditional Vite base URL configuration: `/jh-listings/` for production, `/` for local development (vite.config.js)
+    - Created GitHub Actions workflow with proper job separation (build + deploy) and latest action versions (v4)
+    - Workflow automatically builds and deploys on every push to main branch
+
+**Deployment Issues Fixed:**
+- **Index.html broken structure**: Had massive inline Babel script attempting to transpile entire React app via CDN. This hybrid approach failed for both Vite development and static deployment. Root cause of both GitHub Pages and Vercel failures.
+- **Missing Vite base URL**: GitHub Pages serves at `/jh-listings/` subdirectory, requiring Vite to know the correct base path for asset resolution. Without this, all asset paths were broken.
+- **Outdated GitHub Actions**: Workflows used deprecated action versions (v2 and v3) which GitHub automatically rejected. Required update to v4 for both upload-pages-artifact and deploy-pages.
+- **Incomplete workflow environment setup**: Initial workflow lacked explicit GitHub Pages environment configuration, preventing proper deployment.
+
+**Key Lesson:** Deployment failures were rooted in **source code structure**, not platform issues. Fixing the code first (proper React module loading, Vite configuration) made deployment straightforward.
 
 **Remaining:**
 1. Test the automation setup: verify Google Form submissions are recorded in Sheet, confirm Apps Script trigger is active, test with near-future check-in date
 2. Get REAL owner-confirmed values to replace all sample data: pricing, rules, check-in/out times, max guests, deposit/fees, FAQ answers
-3. Update `og:image`/`twitter:image` to an absolute URL once deployed to a real domain
+3. Update `og:image`/`twitter:image` to actual production domain URL (currently placeholder: `https://jhlistings.com/...`)
 4. Request final confirmation on all property details before launch
-5. Deploy website to live domain (Vercel, Netlify, etc.) and update all placeholder URLs
+5. (Optional) Point custom domain to GitHub Pages if owner has one (currently using `prinzipio.github.io`)
